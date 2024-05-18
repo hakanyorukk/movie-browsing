@@ -8,7 +8,7 @@ export default function Upcoming() {
     <div className="upcoming">
       <p className="upcoming-title">Up comning movies</p>
       <div className="upcoming-movie-list">
-        {upcoming.slice(0, 6).map((movie) => (
+        {upcoming.slice(0, 14).map((movie) => (
           <MovieDetail movie={movie} key={movie.id} genres={genres} />
         ))}
       </div>

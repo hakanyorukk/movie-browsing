@@ -1,12 +1,14 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Search from "./Search";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMovies } from "../context/MovieContext";
 
 export default function NavBar() {
   const { movieFav, dispatch } = useMovies();
   const [isCliked, setIsCliked] = useState(false);
   const navigate = useNavigate();
+  const ref = useRef(null);
+  handleClickOutside(ref);
 
   function handleClick() {
     setIsCliked(isCliked ? false : true);
@@ -21,6 +23,21 @@ export default function NavBar() {
     setIsCliked(false);
   }
 
+  function handleClickOutside(ref) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setIsCliked(false);
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+
   //console.log(movieFav);
   return (
     <nav className="nav-bar-container">
@@ -33,30 +50,30 @@ export default function NavBar() {
           <NavLink to="/movie">Movies</NavLink>
         </li>
         <div className="fav-movies" onClick={handleClick}>
-          <p>Favorites</p>
+          <p style={isCliked ? { color: "#54399b" } : {}}>Favorites</p>
         </div>
-        {isCliked && (
-          <div className="fav-popover">
-            {movieFav.length === 0 ? (
-              <p>Add to favorites by clicking the 'Add' button.</p>
-            ) : (
-              <ul>
-                {movieFav.map((movie) => {
-                  return (
-                    <li
-                      key={movie.id}
-                      className="fav-popover-movies"
-                      onClick={() => handleClickFav(movie)}
-                    >
-                      {movie.title}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-        )}
       </ul>
+      {isCliked && (
+        <div className="fav-popover" ref={ref}>
+          {movieFav.length === 0 ? (
+            <p>Add to favorites by clicking the 'Add' button.</p>
+          ) : (
+            <ul>
+              {movieFav.map((movie) => {
+                return (
+                  <li
+                    key={movie.id}
+                    className="fav-popover-movies"
+                    onClick={() => handleClickFav(movie)}
+                  >
+                    {movie.title}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

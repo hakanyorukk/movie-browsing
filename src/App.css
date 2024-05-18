@@ -6,8 +6,9 @@
   top: 0;
   left: 0;
   right: 0;
-  min-height: 100vh;
-  background-size: cover;
+  /* min-height: 100vh; */
+  /* background-size: cover; */
+  background-size: 100% 100%;
   background-position: top center;
   /* border: 5px solid steelblue; */
 }
@@ -25,7 +26,7 @@
 
 .nav-bar {
   display: relative;
-  /* width: auto; */
+  width: auto;
   list-style: none;
   justify-content: flex-end;
   background-color: rgba(0, 0, 0, 0.9);
@@ -51,22 +52,29 @@
 .fav-popover {
   color: #f0f0f0;
   position: absolute;
-  display: flex;
-  top: 55px;
-  z-index: 1;
+  /* display: flex; */
+  /* top: 60px; */
+  margin-top: auto;
+  z-index: 10;
   right: 20px;
   padding: 10px 25px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: rgba(0, 0, 0);
 }
 
 .fav-popover-movies {
-  display: flex;
+  list-style: none;
   flex-wrap: wrap;
   padding: 5px;
   gap: 5px;
   font-size: 1.2rem;
   cursor: pointer;
+}
+
+.fav-popover-movies:hover {
+  color: #54399b;
+  transition: color 0.4s ease;
 }
 .search-input {
   margin: 5px;
@@ -76,7 +84,8 @@
   width: 300px;
 }
 
-.nav-bar a {
+.nav-bar a,
+p {
   display: flex;
   color: #ddd;
   font-weight: 600;
@@ -88,6 +97,11 @@
 
 .nav-bar a:hover {
   color: #54399b;
+}
+
+.nav-bar p:hover {
+  color: #54399b;
+  transition: color 0.4s ease;
 }
 
 .nav-bar {

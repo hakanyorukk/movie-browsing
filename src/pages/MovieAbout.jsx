@@ -1,9 +1,10 @@
 import YouTube from "react-youtube";
 import NavBar from "../components/NavBar";
 import { useMovies } from "../context/MovieContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./MovieAbout.css";
 import MovieDetail from "../components/MovieDetail";
+import { useNavigate } from "react-router-dom";
 // const opts = {
 //   height: "190",
 //   width: "340",
@@ -21,9 +22,13 @@ const options = {
 const BASE_URL = "https://api.themoviedb.org/3/";
 
 function MovieAbout() {
-  const { movieVideoKey, movieAbout, dispatch, movieFav } = useMovies();
+  const { movieVideoKey, movieAbout, dispatch, movieFav, query, queryMovies } =
+    useMovies();
   const [movie, setMovie] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
+  const navigate = useNavigate();
+  handleClickOutside(ref);
   //console.log(movieVideoKey);
   // console.log(movieAbout.id);
   // console.log(movieAbout);
@@ -32,6 +37,22 @@ function MovieAbout() {
     height: "510",
     width: "1100",
   };
+
+  function handleClickOutside(ref) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          dispatch({ type: "queryterm/loaded", payload: "" });
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+  //console.log(queryMovies[0]?.title);
   useEffect(
     function () {
       async function fetchMovies() {
@@ -57,7 +78,7 @@ function MovieAbout() {
     [movieAbout.id]
   );
 
-  if (!movie) return;
+  if (!movie) return null;
 
   function handleAddFav() {
     dispatch({
@@ -75,6 +96,14 @@ function MovieAbout() {
     });
   }
 
+  function handleQueryMov(movie) {
+    dispatch({ type: "movieabout/loaded", payload: movie });
+    dispatch({ type: "moviesid/loaded", payload: movie.id });
+    dispatch({ type: "queryterm/loaded", payload: "" });
+    navigate(`/movie_detail/${movie.id}`);
+    console.log(movie);
+  }
+
   const isMovieFav = movieFav.find((movie) => movie.id === movieAbout.id);
   //console.log(isMovieFav);
 
@@ -87,69 +116,89 @@ function MovieAbout() {
           backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(https://image.tmdb.org/t/p/w1280/${movie.backdrop_path})`,
         }}
       >
-        <div className="movie-about">
-          <h1>{movie.title}</h1>
-          <p className="movieabout-overview">{movie.overview}</p>
-          <p className="movie-tagline">{movie.tagline}</p>
-          <div className="about">
-            <p>
-              {Math.floor(movie.runtime / 60)} h {movie.runtime % 60} min
-            </p>
-            <p>{movie.release_date.slice(0, 4)}</p>
-          </div>
-
-          <ul className="genres">
-            {movie.genres.map((genre) => (
-              <li key={genre.id}>{genre.name}</li>
-            ))}
-          </ul>
-          <button
-            className="image-fav-button"
-            title="Adding to favorites"
-            // onClick={handleAddFav}
-            onClick={isMovieFav ? handleDeleteFav : handleAddFav}
-          >
-            {isMovieFav ? "Remove " : "Add "}
-            {/* <img
-              className="button-image"
-              src={`../src/icons/${isMovieFav ? "full_" : ""}heart.png`}
-              alt="Add Favorites"
-            /> */}
-          </button>
-          <div className="production">
-            <p>Production companies</p>
+        {queryMovies.length > 0 ? (
+          <div className="query-movies-list" ref={ref}>
             <ul>
-              {movie.production_companies.map((comp) => (
-                <li key={comp.name}>{comp.name}, </li>
-              ))}
+              {queryMovies.slice(0, 6).map((mov) => {
+                return (
+                  <li key={mov.id}>
+                    <p onClick={() => handleQueryMov(mov)}>{mov.title}</p>
+                  </li>
+                );
+              })}
             </ul>
           </div>
-          <div className="countries">
-            <p>Production Countries:</p>
-            <ul>
-              {movie.production_countries.map((country) => (
-                <li key={country.name}>{country.name}, </li>
-              ))}
-            </ul>
-          </div>
-
-          {movieVideoKey ? (
-            <button onClick={() => setIsOpen(true)} className="trailer-button">
-              Watch Trailer{" "}
-            </button>
-          ) : (
-            ""
-          )}
-
-          {isOpen && (
-            <div className="video">
-              <YouTube videoId={`${movieVideoKey}`} opts={opts} />
-              <button className="close-button" onClick={() => setIsOpen(false)}>
-                &times;
-              </button>
+        ) : (
+          <div className="movie-about">
+            <h1>{movie.title}</h1>
+            <p className="movieabout-overview">{movie.overview}</p>
+            <p className="movie-tagline">{movie.tagline}</p>
+            <div className="about">
+              <p>
+                {Math.floor(movie.runtime / 60)} h {movie.runtime % 60} min
+              </p>
+              <p>{movie.release_date.slice(0, 4)}</p>
             </div>
-          )}
-        </div>
+
+            <ul className="genres">
+              {movie.genres.map((genre) => (
+                <li key={genre.id}>{genre.name}</li>
+              ))}
+            </ul>
+            <button
+              className="image-fav-button"
+              title="Adding to favorites"
+              // onClick={handleAddFav}
+              onClick={isMovieFav ? handleDeleteFav : handleAddFav}
+            >
+              {isMovieFav ? "Remove " : "Add "}
+              {/* <img
+            className="button-image"
+            src={`../src/icons/${isMovieFav ? "full_" : ""}heart.png`}
+            alt="Add Favorites"
+          /> */}
+            </button>
+            <div className="production">
+              <p>Production companies</p>
+              <ul>
+                {movie.production_companies.map((comp) => (
+                  <li key={comp.name}>{comp.name}, </li>
+                ))}
+              </ul>
+            </div>
+            <div className="countries">
+              <p>Production Countries:</p>
+              <ul>
+                {movie.production_countries.map((country) => (
+                  <li key={country.name}>{country.name}, </li>
+                ))}
+              </ul>
+            </div>
+
+            {movieVideoKey ? (
+              <button
+                onClick={() => setIsOpen(true)}
+                className="trailer-button"
+              >
+                Watch Trailer{" "}
+              </button>
+            ) : (
+              ""
+            )}
+
+            {isOpen && (
+              <div className="video">
+                <YouTube videoId={`${movieVideoKey}`} opts={opts} />
+                <button
+                  className="close-button"
+                  onClick={() => setIsOpen(false)}
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
