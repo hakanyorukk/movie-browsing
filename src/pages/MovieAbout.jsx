@@ -110,11 +110,11 @@ function MovieAbout() {
             onClick={isMovieFav ? handleDeleteFav : handleAddFav}
           >
             {isMovieFav ? "Remove " : "Add "}
-            <img
+            {/* <img
               className="button-image"
               src={`../src/icons/${isMovieFav ? "full_" : ""}heart.png`}
               alt="Add Favorites"
-            />
+            /> */}
           </button>
           <div className="production">
             <p>Production companies</p>
