@@ -6,6 +6,8 @@ Preview:
 ![Screenshot from 2024-05-18 19-34-04](https://github.com/hakanyorukk/movie-browsing/assets/125490544/fb85330e-f464-43d8-9c33-da2dda19a898)
 ![Screenshot from 2024-05-18 19-36-36](https://github.com/hakanyorukk/movie-browsing/assets/125490544/a43ab096-17e5-46bb-aed6-42c3a8cd7b4a)
 ![Screenshot from 2024-05-18 19-30-44](https://github.com/hakanyorukk/movie-browsing/assets/125490544/c2600a24-af96-447f-9af8-9e83627c9011)
+![Screenshot from 2024-05-18 19-33-10](https://github.com/hakanyorukk/movie-browsing/assets/125490544/d634b5b3-cecb-45c7-845c-601af44df978)
+
 
 
 
